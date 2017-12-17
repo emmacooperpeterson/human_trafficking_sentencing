@@ -1,0 +1,59 @@
+/* BACKGROUND AND HEADER */
+
+svg {background-color: #f4f4f4;}
+
+#chart {
+    position: relative;
+    height: 0;
+    width: 100%;
+    padding: 0;
+    /* padding-bottom will be overwritten by JavaScript later */
+    padding-bottom: 100%;
+}
+
+#chart > svg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+}
+
+.box-desc-text {
+  font-family: 'Courier New', serif;
+  font-size: 5px;
+}
+
+.var-labels {
+  font-family: 'Courier New', serif;
+  font-size: 7px;
+}
+
+.lines {
+  stroke-width: 0.25;
+}
+
+.permanent-footnote, .variable-footnote {
+  font-family: 'Courier New', serif;
+  font-size: 5px;
+}
+
+.include-text, .sort-text {
+  font-family: 'Courier New', serif;
+  font-size: 7px;
+}
+
+.side-header {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+}
+
+.axisLabel {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8px;
+}
+
+.tick {
+  font-family: 'Courier New', serif;
+  font-size: 7px;
+}
