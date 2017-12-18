@@ -89,10 +89,9 @@ d3.json("ht_sentencing.json", function(error, data) {
   //window.setTimeout('delayScatters(dataset)', 1);
   window.setTimeout('getSortMenu()', 1);
 }); //end load data
-//
-//
-//
-//
+
+
+
 function getData() {
 
   var filteredData = dataset.filter(function(d) {return !isNaN(d[selectedVariable]);});
@@ -171,7 +170,7 @@ function drawOptions() {
           .attr('class', 'side-header')
           .attr('x', 0)
           .attr('y', 5)
-          .text('Include:')
+          .text('Examine by:')
 
   //create groups for include options
   options = sidebar.selectAll("circle.include-circles")
@@ -565,7 +564,6 @@ function drawChart(sortMethod, selectedVariable, method='update') {
 
   //tooltip on
   boxplotGroups.on('mouseover', function(d) {
-
     var plot = d3.select(this);
     var xValues = plot._groups[0][0].__data__.value;
     var y = parseFloat(plot._groups[0][0].childNodes[0].attributes[1].value);
@@ -578,11 +576,10 @@ function drawChart(sortMethod, selectedVariable, method='update') {
 
     //comparison line
     chart.append('line')
-          .attr('class', 'tooltip')
-          .attr('x1', 0)
+          .attr('x1', -10)
           .attr('y1', 0)
-          .attr('x2', 0)
-          .attr('y2', chartHeight/1.1)
+          .attr('x2', -10)
+          .attr('y2', chartHeight)
           .attr('stroke-width', 3)
           .attr('stroke', 'black')
           .attr('stroke-dasharray', '5,5')
@@ -592,53 +589,55 @@ function drawChart(sortMethod, selectedVariable, method='update') {
           .attr('x1', yScale(xValues.median))
           .attr('y1', 0)
           .attr('x2', yScale(xValues.median))
-          .attr('y2', chartHeight/1.1)
-          .attr('stroke-width', 3)
+          .attr('y2', chartHeight)
+          .attr('stroke-width', 2)
           .attr('stroke', 'black')
           .attr('stroke-dasharray', '5,5')
           .attr('opacity', 0.25)
+          .attr('class', 'tools')
+          .attr('clip-path', 'url(#chart-area)')
 
     //box to hold stats
     chart.append('rect')
-          .attr('class', 'tooltip')
+          .attr('class', 'tools')
           .attr('x', xCoord)
           .attr('y', y + 15)
-          .attr('width', 100)
-          .attr('height', 102)
+          .attr('width', 2.5*margin.top)
+          .attr('height', 2.45*margin.top)
           .attr('fill', '#f4f4f4')
           .attr('opacity', 0)
           .transition()
           .duration(1000)
           .attr('x', xCoord)
           .attr('y', y + 15)
-          .attr('width', 100)
-          .attr('height', 102)
+          .attr('width', 2.5*margin.top)
+          .attr('height', 2.45*margin.top)
           .attr('fill', function() {return tooltipColors[color]})
           .attr('opacity', 1)
 
-    i=32
+    var i = margin.top
     for (var v in xValues) {
       label = String(xValues[v])
 
       chart.append('text')
-            .attr('x', xCoord + 10)
+            .attr('x', xCoord + 6)
             .attr('y', y + i)
             .attr('opacity', 0)
             .transition()
             .duration(500)
-            .attr('x', xCoord + 10)
+            .attr('x', xCoord + 6)
             .attr('y', y + i)
             .attr('opacity', 1)
-            .attr('class', 'tooltip')
+            .attr('class', 'tools')
             .text(stats[v] + label.slice(0,4));
 
-      i = i + 15
+      i = i + 9
     } //end loop
   }); //end tooltip on
 
   //tooltip off
   boxplotGroups.on('mouseout', function() {
-    d3.selectAll('.tooltip')
+    d3.selectAll('.tools')
       .transition()
       .duration(500)
       .attr('opacity', 0)

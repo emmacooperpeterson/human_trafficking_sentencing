@@ -29,6 +29,11 @@ svg {background-color: #f4f4f4;}
   font-size: 7px;
 }
 
+.tools {
+  font-family: 'Courier New', serif;
+  font-size: 6px;
+}
+
 .lines {
   stroke-width: 0.25;
 }
