@@ -296,7 +296,7 @@ function drawOptions() {
     // mouseover effect:
     // https://stackoverflow.com/questions/36326683/d3-js-how-can-i-set-the-cursor-to-hand-when-mouseover-these-elements-on-svg-co
 
-    //default
+    //defaults
     var defaultVariable = d3.select('#circle_type')
     selectOption(defaultVariable, 'type')
 
@@ -370,14 +370,17 @@ function drawSideChart(view='box') {
 
   else if (view == 'dots') {
 
-    var dots = [margin.left/2, margin.left/1.8, margin.left/1.6, margin.left/1.5,
-                margin.left/1.3, margin.left, margin.left*1.1, margin.left*1.2,
-                margin.left*1.4, margin.left*1.9, margin.left*2, margin.left*2.4,
-                margin.left*2.6, margin.left*2.6, margin.left*2.7, margin.left*2.8,
-                margin.left*2.9]
+    Math.seedrandom('setting-the-seed') //https://www.npmjs.com/package/seedrandom
 
-    var description = ['Each dot represents one defendant. Its horizonal position',
-                        'represents the prison sentence the defendent received.']
+    var dots = []
+
+    for (i=0; i<10; i++) {
+      dots.push(margin.left*((Math.random() * 6) + 1))
+    }
+
+    var description = ['Each dot represents one defendant. Its horizonal',
+                        'position represents the prison sentence that the',
+                        'defendant received.']
 
     smallChart.selectAll('circle')
               .data(dots)
@@ -387,20 +390,22 @@ function drawSideChart(view='box') {
               .attr('cx', function(d) {return d})
               .attr('cy', function(d, i) {
                 if (i%4 == 0) {return margin.top}
-                else if (i%3 == 0) {return margin.top*1.1}
-                else if (i%2 == 0) {return margin.top*0.9}
-                else {return margin.top*0.8}})
-              .attr('r', 3)
+                else if (i%3 == 0) {return margin.top*1.2 + Math.random()*10}
+                else if (i%2 == 0) {return margin.top*0.8 + Math.random()*10}
+                else {return margin.top*0.6 + Math.random()*10}})
+              .attr('r', 2)
               .attr('opacity', 0.6)
 
     smallChart.selectAll('text.desc')
               .data(description)
               .enter()
               .append('text')
-              .attr('x', margin.left/2)
+              .attr('x', margin.left)
               .attr('y', function(d,i) {
-                 if (i === 0) {return margin.top*1.4}
-                 else {return margin.top*1.5}})
+                 if (i === 0) {return margin.top*2}
+                 else if (i === 1) {return margin.top*2.25}
+                 else {return margin.top*2.5}
+              })
               .attr('class', 'desc dot-desc dot-desc-text')
               .text(function(d) {return d})
               .attr('opacity', 1)
@@ -946,6 +951,7 @@ function update() {
 
   var desc = d3.selectAll('.desc');
   var oval = d3.select('#oval');
+  var explodeCircle = d3.select('#explode-button');
 
   var jr = d3.select('#judge_race')
   var jg = d3.select('#judge_gender')
@@ -977,7 +983,7 @@ function update() {
 
   for (option of options) {
     option.on('click', function() {
-      clickedID = this.id
+      clickedID = this.id;
       for (c of optionCircles) {
         if (c._groups[0][0].id === 'circle_' + clickedID) {
           selectOption(c, clickedID)
@@ -985,13 +991,13 @@ function update() {
         else {unselectOption(c)}
       }
 
-      var explodeCircle = d3.select('#explode-button');
-      explodeCircle.transition().duration(500).attr('cx', margin.left*3)
-      oval.transition().duration(500).attr('fill', '#898989')
+      explodeCircle.transition().duration(500).attr('cx', margin.left*3);
+      oval.transition().duration(500).attr('fill', '#898989');
       desc.remove();
       drawSideChart(view='box');
       removePlots(method='update');
-      drawChart(sortMethod = window.sorting, selectedVariable = clickedID, method='update');
+      drawChart(sortMethod = window.sorting, selectedVariable = window.selectedID, method='update');
+      window.setTimeout('delayScatters(dataset)', 1);
     })
   }
 }; //end update process
@@ -1019,10 +1025,10 @@ function removePlots(method) {
   labs.remove();
   clippaths.remove();
 }; // end remove Plots
-//
-//
-//
-//
+
+
+
+
 // //inspired by: http://mcaule.github.io/d3_exploding_boxplot/
 function drawScatter(dataset, variable, category, catLength) {
 
@@ -1093,6 +1099,7 @@ function delayScatters(dataset) {
 
   //explode plots one at at time
   plots.on('click', function() {
+
     var plotID = this.id;
     var plotNum = parseFloat(plotID.substr(plotID.length - 1));
     var box = d3.select(plotID);
@@ -1147,7 +1154,7 @@ function delayScatters(dataset) {
     var oval = d3.select('#oval');
 
     if (!explodeClicked) {
-      explodeCircle.transition().duration(500).attr('cx', margin.left*1.86)
+      explodeCircle.transition().duration(500).attr('cx', margin.left*3.32)
       oval.transition().duration(500).attr('fill', 'black')
       for (cat in clicked) {
         if (!clicked[cat]) {
@@ -1159,10 +1166,12 @@ function delayScatters(dataset) {
         } //end if
       } //end for
       explodeClicked = true;
+      console.log(explodeClicked)
+
     } //end if
 
     else if (explodeClicked) {
-      explodeCircle.transition().duration(500).attr('cx', margin.left*1.7);
+      explodeCircle.transition().duration(500).attr('cx', margin.left*3);
       oval.transition().duration(500).attr('fill', '#898989');
       for (cat in clicked) {
         if (clicked[cat]) {
@@ -1187,6 +1196,9 @@ function delayScatters(dataset) {
         } //end if
       } //end for
       explodeClicked = false;
+      console.log(explodeClicked)
+
     } //end else if
   }) //end explodeButton.on
+
 } //end delayScatters

@@ -19,11 +19,6 @@ svg {background-color: #f4f4f4;}
     top: 0;
 }
 
-.box-desc-text {
-  font-family: 'Courier New', serif;
-  font-size: 5px;
-}
-
 .var-labels {
   font-family: 'Courier New', serif;
   font-size: 7px;
@@ -61,4 +56,9 @@ svg {background-color: #f4f4f4;}
 .tick {
   font-family: 'Courier New', serif;
   font-size: 7px;
+}
+
+.box-desc-text, .dot-desc-text {
+  font-family: 'Courier New', serif;
+  font-size: 5px;
 }
