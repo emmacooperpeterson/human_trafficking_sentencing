@@ -574,6 +574,94 @@ function drawChart(sortMethod, selectedVariable, method='update') {
         .attr('width', width)
         .attr('height', height)
 
+  tooltips();
+  // //tooltip on
+  // boxplotGroups.on('mouseover', function(d) {
+  //   var plot = d3.select(this);
+  //   var xValues = plot._groups[0][0].__data__.value;
+  //   var y = parseFloat(plot._groups[0][0].childNodes[0].attributes[1].value);
+  //   var color = plot._groups[0][0].__data__.key;
+  //   var coordinates = d3.mouse(this);
+  //   var xCoord = coordinates[0];
+  //
+  //   var stats = {'min': 'min: ', 'q1': '25%: ', 'median': 'median: ',
+  //                 'q3': '75%: ', 'max': 'max: ', 'count': 'cases: '}
+  //
+  //
+  //
+  //   //comparison line
+  //   chart.append('line')
+  //         .attr('x1', -10)
+  //         .attr('y1', 0)
+  //         .attr('x2', -10)
+  //         .attr('y2', 1.1*chartHeight)
+  //         .attr('stroke-width', 3)
+  //         .attr('stroke', 'black')
+  //         .attr('stroke-dasharray', '5,5')
+  //         .attr('opacity', 0.25)
+  //         .transition()
+  //         .duration(500)
+  //         .attr('x1', yScale(xValues.median))
+  //         .attr('y1', 0)
+  //         .attr('x2', yScale(xValues.median))
+  //         .attr('y2', chartHeight)
+  //         .attr('stroke-width', 2)
+  //         .attr('stroke', 'black')
+  //         .attr('stroke-dasharray', '5,5')
+  //         .attr('opacity', 0.25)
+  //         .attr('class', 'tools')
+  //         .attr('clip-path', 'url(#chart-area)')
+  //
+  //   //box to hold stats
+  //   chart.append('rect')
+  //         .attr('class', 'tools')
+  //         .attr('x', xCoord)
+  //         .attr('y', y + 15)
+  //         .attr('width', 2.5*margin.top)
+  //         .attr('height', 2.45*margin.top)
+  //         .attr('fill', '#f4f4f4')
+  //         .attr('opacity', 0)
+  //         .transition()
+  //         .duration(1000)
+  //         .attr('x', xCoord)
+  //         .attr('y', y + 15)
+  //         .attr('width', 2.5*margin.top)
+  //         .attr('height', 2.45*margin.top)
+  //         .attr('fill', function() {return tooltipColors[color]})
+  //         .attr('opacity', 1)
+  //
+  //   var i = margin.top
+  //   for (var v in xValues) {
+  //     label = String(xValues[v])
+  //
+  //     chart.append('text')
+  //           .attr('x', xCoord + 6)
+  //           .attr('y', y + i)
+  //           .attr('opacity', 0)
+  //           .transition()
+  //           .duration(500)
+  //           .attr('x', xCoord + 6)
+  //           .attr('y', y + i)
+  //           .attr('opacity', 1)
+  //           .attr('class', 'tools')
+  //           .text(stats[v] + label.slice(0,4));
+  //
+  //     i = i + 9
+  //   } //end loop
+  // }); //end tooltip on
+  //
+  // //tooltip off
+  // boxplotGroups.on('mouseout', function() {
+  //   d3.selectAll('.tools')
+  //     .transition()
+  //     .duration(500)
+  //     .attr('opacity', 0)
+  //     .remove();
+  //  })
+}; //end drawChart
+
+
+function tooltips() {
   //tooltip on
   boxplotGroups.on('mouseover', function(d) {
     var plot = d3.select(this);
@@ -586,8 +674,7 @@ function drawChart(sortMethod, selectedVariable, method='update') {
     var stats = {'min': 'min: ', 'q1': '25%: ', 'median': 'median: ',
                   'q3': '75%: ', 'max': 'max: ', 'count': 'cases: '}
 
-    d3.select(this)
-      .style('cursor', 'pointer')
+
 
     //comparison line
     chart.append('line')
@@ -604,7 +691,7 @@ function drawChart(sortMethod, selectedVariable, method='update') {
           .attr('x1', yScale(xValues.median))
           .attr('y1', 0)
           .attr('x2', yScale(xValues.median))
-          .attr('y2', 1.1*chartHeight)
+          .attr('y2', chartHeight)
           .attr('stroke-width', 2)
           .attr('stroke', 'black')
           .attr('stroke-dasharray', '5,5')
@@ -658,8 +745,7 @@ function drawChart(sortMethod, selectedVariable, method='update') {
       .attr('opacity', 0)
       .remove();
    })
-}; //end drawChart
-
+}
 
 
 function appendLabels(xScale, yScale, selectedVariable, method) {
@@ -1085,6 +1171,7 @@ function clickedTrue(obj) {
 
 function delayScatters(dataset) {
 
+  var labels = d3.selectAll('.var-labels')
   var categories = d3.selectAll('.var-labels')._groups[0]
   var catLength = categories.length;
   var plots = d3.selectAll('.plot')
@@ -1097,17 +1184,25 @@ function delayScatters(dataset) {
     clicked[varNum] = false;
   }
 
+
+
+
   //explode plots one at at time
-  plots.on('click', function() {
+  labels.on('click', function() {
 
     var plotID = this.id;
     var plotNum = parseFloat(plotID.substr(plotID.length - 1));
-    var box = d3.select(plotID);
+    var box = d3.select('#plot' + plotNum);
     var desc = d3.selectAll('.desc');
+    var tools = d3.selectAll('.tools')
+
+    console.log(box);
+
 
     if (!clicked[plotNum]) {
       drawScatter(dataset, window.selectedID, plotNum, catLength);
       box.transition().duration(800).attr('opacity', 0);
+      box.on('mouseover', function(){}) //hide tooltips
       clicked[plotNum] = true;
     }
 
@@ -1127,6 +1222,7 @@ function delayScatters(dataset) {
               .attr('opacity', 0)
               .remove();
       box.transition().duration(1300).attr('opacity', 1);
+      tooltips();
       clicked[plotNum] = false;
     }
 

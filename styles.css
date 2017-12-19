@@ -62,3 +62,8 @@ svg {background-color: #f4f4f4;}
   font-family: 'Courier New', serif;
   font-size: 5px;
 }
+
+.var-labels:hover {
+  font-weight: bold;
+  cursor: pointer;
+}
