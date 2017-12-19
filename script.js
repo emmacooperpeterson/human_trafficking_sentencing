@@ -86,7 +86,7 @@ d3.json("ht_sentencing.json", function(error, data) {
   //xLabel();
   //applyFootnotes();
   update();
-  //window.setTimeout('delayScatters(dataset)', 1);
+  window.setTimeout('delayScatters(dataset)', 1);
   window.setTimeout('getSortMenu()', 1);
 }); //end load data
 
@@ -186,7 +186,7 @@ function drawOptions() {
           .attr('cx', 4)
           .attr('cy', function(d) {return d.x})
           .attr('r', 4)
-          .attr('id', function(d) {console.log(d.id); return 'circle_' + d.id})
+          .attr('id', function(d) {return 'circle_' + d.id})
           .attr('fill', 'white')
           .attr('stroke-width', 0.25)
           .attr('stroke', 'black')
@@ -297,9 +297,11 @@ function drawOptions() {
     // https://stackoverflow.com/questions/36326683/d3-js-how-can-i-set-the-cursor-to-hand-when-mouseover-these-elements-on-svg-co
 
     //default
-    var defaultCircle = d3.select('#circle_type')
-    selectVariable(defaultCircle, 'type')
+    var defaultVariable = d3.select('#circle_type')
+    selectOption(defaultVariable, 'type')
 
+    var defaultSort = d3.select('#circle_ascending')
+    selectOption(defaultSort, 'ascending')
 }
 
 
@@ -877,25 +879,49 @@ function drawGrid() {
 //
 //
 
+
+
+
+function selectOption(circle, id) {
+  circle.attr('fill', 'black')
+
+  if (id === 'ascending' | id === 'descending') {
+    window.sorting = id
+  }
+
+  else {
+    window.selectedID = id
+  }
+}; //end selectOption
+
+
+
+function unselectOption(circle) {
+  circle.attr('fill', 'white')
+}; //end unselectOption
+
+
+
 //sort boxplots
 function getSortMenu() {
-var asc = d3.select('#ascending')
-var desc = d3.select('#descending')
-var aCircle = d3.select('#circle_ascending')
-var dCircle = d3.select('#circle_descending')
+  var asc = d3.select('#ascending')
+  var desc = d3.select('#descending')
+  var aCircle = d3.select('#circle_ascending')
+  var dCircle = d3.select('#circle_descending')
 
-asc.on('click', function() {
-  aCircle.attr('fill', 'black')
-  dCircle.attr('fill', 'white')
-  sortPlots(sortMethod='ascending')
-})
+  asc.on('click', function() {
+    selectOption(aCircle, 'ascending')
+    unselectOption(dCircle)
+    sortPlots(sortMethod='ascending')
+  })
 
-desc.on('click', function() {
-  aCircle.attr('fill', 'white')
-  dCircle.attr('fill', 'black')
-  sortPlots(sortMethod='descending')
-})
+  desc.on('click', function() {
+    selectOption(dCircle, 'descending')
+    unselectOption(aCircle)
+    sortPlots(sortMethod='descending')
+  })
 }
+
 
 
 function sortPlots(sortMethod) {
@@ -908,20 +934,12 @@ function sortPlots(sortMethod) {
   desc.remove();
   drawSideChart(view='box');
   removePlots(method='sort');
-  console.log(window.value)
-  drawChart(sortMethod=sortMethod, selectedVariable=window.value, method='sort');
+  drawChart(sortMethod=sortMethod, selectedVariable=window.selectedID, method='sort');
   // window.setTimeout('delayScatters(dataset)', 3000);
 
 }
 
-function selectVariable(circle, id) {
-  circle.attr('fill', 'black')
-  window.value = id
-}
 
-function unselectVariable(circle) {
-  circle.attr('fill', 'white')
-}
 
 //update boxplots
 function update() {
@@ -962,9 +980,9 @@ function update() {
       clickedID = this.id
       for (c of optionCircles) {
         if (c._groups[0][0].id === 'circle_' + clickedID) {
-          selectVariable(c, clickedID)
+          selectOption(c, clickedID)
         }
-        else {unselectVariable(c)}
+        else {unselectOption(c)}
       }
 
       var explodeCircle = d3.select('#explode-button');
@@ -973,7 +991,7 @@ function update() {
       desc.remove();
       drawSideChart(view='box');
       removePlots(method='update');
-      drawChart(sortMethod = 'ascending', selectedVariable = clickedID, method='update');
+      drawChart(sortMethod = window.sorting, selectedVariable = clickedID, method='update');
     })
   }
 }; //end update process
@@ -1006,173 +1024,169 @@ function removePlots(method) {
 //
 //
 // //inspired by: http://mcaule.github.io/d3_exploding_boxplot/
-// function drawScatter(dataset, variable, category, catLength) {
-//
-//   chart.selectAll('dot')
-//         .data(dataset)
-//         .enter()
-//         .filter(function(d) {return d[variable] == category & d.sentence <= 30})
-//         .append('circle')
-//         .attr('class', function(d) {return 'dot ' + 'dot' + d[variable]})
-//         .attr('opacity', 0)
-//         .attr('cx', yScale(15))
-//         .attr('cy', function(d, i) { //https://bl.ocks.org/duhaime/14c30df6b82d3f8094e5a51e5fff739a
-//           if (i%2 === 0) {
-//             return xScale(d[variable]) + xScale.bandwidth()/2
-//           }
-//           else {
-//            return xScale(d[variable]) + xScale.bandwidth()/2
-//           }
-//         })
-//         .attr('clip-path', 'url(#chart-area)')
-//         .transition()
-//         .duration(function(d, i) {
-//           if (i%4 === 0) {return 900 + Math.random()*100}
-//           else if (i%4 === 1) {return 1000 + Math.random()*100}
-//           else if (i%4 === 2) {return 1100 + Math.random()*100}
-//           else {return 1300 + Math.random()*100}
-//         })
-//         .ease(d3.easeBackOut)
-//         .attr('cx', function(d) {return yScale(d.sentence) + Math.random()*10})
-//         .attr('cy', function(d, i) {
-//           if (i%2 === 0) {
-//             return xScale(d[variable]) + xScale.bandwidth()/2 + Math.random() * height/(3*catLength)
-//           }
-//           else {
-//            return xScale(d[variable]) + xScale.bandwidth()/2 - Math.random() * height/(3*catLength)
-//           }
-//         })
-//         .attr('r', 4)
-//         .attr('opacity', 0.5)
-//         .attr('fill', function(d) {return colors[d[variable]][0]});
-// }; //end drawScatter
-//
-//
-//
-//
-// //https://stackoverflow.com/questions/17117712/how-to-know-if-all-javascript-object-values-are-true
-// function clickedTrue(obj) {
-//   for (var o in obj) {
-//     if(obj[o]) {return true}
-//   }
-//   return false;
-// } //end clickedTrue
-//
-//
-//
-//
-// function delayScatters(dataset) {
-//
-//   var categories = d3.selectAll('.var-labels');
-//   var catLength = categories._groups[0].length;
-//   var selectedVariable = d3.select('input[name = "variable"]:checked')
-//                             .property("value");
-//
-//   //array to keep track of which plot has been clicked
-//   var cats = categories._groups[0]
-//   var clicked = {};
-//   for (i = 0; i < catLength; i++) {
-//     var varID = cats[i].id;
-//     var varNum = varID.substr(-1);
-//     clicked[varNum] = false;
-//   }
-//
-//   //explode plots one at at time
-//   categories.on('click', function() {
-//     var plotID = this.id;
-//     var cat = parseFloat(plotID.substr(plotID.length - 1));
-//     var box = d3.select('#plot' + cat);
-//     var desc = d3.selectAll('.desc');
-//
-//     if (!clicked[cat]) {
-//       drawScatter(dataset, selectedVariable, cat, catLength);
-//       box.transition().duration(800).attr('opacity', 0);
-//       clicked[cat] = true;
-//     }
-//
-//     else if (clicked[cat]) {
-//       var scatters = d3.selectAll('.dot' + cat);
-//
-//       scatters.attr('clip-path', 'url(#chart-area)').transition()
-//               .duration(function(d, i) {
-//                 if (i%6 === 0) {return 600 + Math.random()*100}
-//                 else if (i%5 === 0) {return 900 + Math.random()*100}
-//                 else if (i%4 === 0) {return 1200 + Math.random()*100}
-//                 else if (i%3 === 0) {return 1500 + Math.random()*100}
-//                 else if (i%2 === 0) {return 1800 + Math.random()*100}
-//                 else {return 2100 + Math.random()*100}
-//               })
-//               .attr('cx', -10)
-//               .attr('opacity', 0)
-//               .remove();
-//       box.transition().duration(1300).attr('opacity', 1);
-//       clicked[cat] = false;
-//     }
-//
-//     //change chart diagram if necessary
-//     if (clickedTrue(clicked)) {
-//           desc.remove();
-//           drawSideChart(view='dots');
-//     }
-//
-//     else {
-//           desc.remove();
-//           drawSideChart(view='box');
-//     }
-//   }) //end categories.on
-//
-//
-//   //explode all
-//   var explodeButton = d3.selectAll('#explode-button, #oval');
-//   var explodeCircle = d3.select('#explode-button');
-//   var explodeClicked = false;
-//
-//   explodeButton.on('click', function() {
-//     var box = d3.selectAll('.plot');
-//     var desc = d3.selectAll('.desc');
-//     var oval = d3.select('#oval');
-//
-//     if (!explodeClicked) {
-//       explodeCircle.transition().duration(500).attr('cx', margin.left*1.86)
-//       oval.transition().duration(500).attr('fill', 'black')
-//       for (cat in clicked) {
-//         if (!clicked[cat]) {
-//           desc.remove();
-//           drawSideChart(view='dots');
-//           box.transition().duration(800).attr('opacity', 0);
-//           drawScatter(dataset, selectedVariable, cat, catLength);
-//           clicked[cat] = true;
-//         } //end if
-//       } //end for
-//       explodeClicked = true;
-//     } //end if
-//
-//     else if (explodeClicked) {
-//       explodeCircle.transition().duration(500).attr('cx', margin.left*1.7);
-//       oval.transition().duration(500).attr('fill', '#898989');
-//       for (cat in clicked) {
-//         if (clicked[cat]) {
-//           desc.remove();
-//           drawSideChart(view='box');
-//           box.transition().duration(1300).attr('opacity', 1);
-//           var scatters = d3.selectAll('.dot');
-//           scatters.attr('clip-path', 'url(#chart-area)')
-//                   .transition()
-//                   .duration(function(d, i) {
-//                       if (i%6 === 0) {return 600 + Math.random()*100}
-//                       else if (i%5 === 0) {return 900 + Math.random()*100}
-//                       else if (i%4 === 0) {return 1200 + Math.random()*100}
-//                       else if (i%3 === 0) {return 1500 + Math.random()*100}
-//                       else if (i%2 === 0) {return 1800 + Math.random()*100}
-//                       else {return 2100 + Math.random()*100}
-//                   })
-//                   .attr('cx', -10)
-//                   .attr('opacity', 0)
-//                   .remove();
-//           clicked[cat] = false;
-//         } //end if
-//       } //end for
-//       explodeClicked = false;
-//     } //end else if
-//   }) //end explodeButton.on
-// } //end delayScatters
+function drawScatter(dataset, variable, category, catLength) {
+
+  chart.selectAll('dot')
+        .data(dataset)
+        .enter()
+        .filter(function(d) {return d[variable] == category & d.sentence <= 30})
+        .append('circle')
+        .attr('class', function(d) {return 'dot ' + 'dot' + d[variable]})
+        .attr('opacity', 0)
+        .attr('cx', yScale(15))
+        .attr('cy', function(d, i) { //https://bl.ocks.org/duhaime/14c30df6b82d3f8094e5a51e5fff739a
+          if (i%2 === 0) {
+            return xScale(d[variable]) + xScale.bandwidth()/2
+          }
+          else {
+           return xScale(d[variable]) + xScale.bandwidth()/2
+          }
+        })
+        .attr('clip-path', 'url(#chart-area)')
+        .transition()
+        .duration(function(d, i) {
+          if (i%4 === 0) {return 900 + Math.random()*100}
+          else if (i%4 === 1) {return 1000 + Math.random()*100}
+          else if (i%4 === 2) {return 1100 + Math.random()*100}
+          else {return 1300 + Math.random()*100}
+        })
+        .ease(d3.easeBackOut)
+        .attr('cx', function(d) {return yScale(d.sentence) + Math.random()*10})
+        .attr('cy', function(d, i) {
+          if (i%2 === 0) {
+            return xScale(d[variable]) + xScale.bandwidth()/2 + Math.random() * chartHeight/(3*catLength)
+          }
+          else {
+           return xScale(d[variable]) + xScale.bandwidth()/2 - Math.random() * chartHeight/(3*catLength)
+          }
+        })
+        .attr('r', 3)
+        .attr('opacity', 0.5)
+        .attr('fill', function(d) {return colors[d[variable]][0]});
+}; //end drawScatter
+
+
+
+//https://stackoverflow.com/questions/17117712/how-to-know-if-all-javascript-object-values-are-true
+function clickedTrue(obj) {
+  for (var o in obj) {
+    if(obj[o]) {return true}
+  }
+  return false;
+} //end clickedTrue
+
+
+
+function delayScatters(dataset) {
+
+  var categories = d3.selectAll('.var-labels')._groups[0]
+  var catLength = categories.length;
+  var plots = d3.selectAll('.plot')
+
+  //array to keep track of which plot has been clicked
+  var clicked = {};
+  for (i = 0; i < catLength; i++) {
+    var varID = categories[i].id;
+    var varNum = varID.substr(-1);
+    clicked[varNum] = false;
+  }
+
+  //explode plots one at at time
+  plots.on('click', function() {
+    var plotID = this.id;
+    var plotNum = parseFloat(plotID.substr(plotID.length - 1));
+    var box = d3.select(plotID);
+    var desc = d3.selectAll('.desc');
+
+    if (!clicked[plotNum]) {
+      drawScatter(dataset, window.selectedID, plotNum, catLength);
+      box.transition().duration(800).attr('opacity', 0);
+      clicked[plotNum] = true;
+    }
+
+    else if (clicked[plotNum]) {
+      var scatters = d3.selectAll('.dot' + plotNum);
+
+      scatters.attr('clip-path', 'url(#chart-area)').transition()
+              .duration(function(d, i) {
+                if (i%6 === 0) {return 600 + Math.random()*100}
+                else if (i%5 === 0) {return 900 + Math.random()*100}
+                else if (i%4 === 0) {return 1200 + Math.random()*100}
+                else if (i%3 === 0) {return 1500 + Math.random()*100}
+                else if (i%2 === 0) {return 1800 + Math.random()*100}
+                else {return 2100 + Math.random()*100}
+              })
+              .attr('cx', -10)
+              .attr('opacity', 0)
+              .remove();
+      box.transition().duration(1300).attr('opacity', 1);
+      clicked[plotNum] = false;
+    }
+
+    //change chart diagram if necessary
+    if (clickedTrue(clicked)) {
+          desc.remove();
+          drawSideChart(view='dots');
+    }
+
+    else {
+          desc.remove();
+          drawSideChart(view='box');
+    }
+  }) //end categories.on
+
+
+  //explode all
+  var explodeButton = d3.selectAll('#explode-button, #oval');
+  var explodeCircle = d3.select('#explode-button');
+  var explodeClicked = false;
+
+  explodeButton.on('click', function() {
+    var box = d3.selectAll('.plot');
+    var desc = d3.selectAll('.desc');
+    var oval = d3.select('#oval');
+
+    if (!explodeClicked) {
+      explodeCircle.transition().duration(500).attr('cx', margin.left*1.86)
+      oval.transition().duration(500).attr('fill', 'black')
+      for (cat in clicked) {
+        if (!clicked[cat]) {
+          desc.remove();
+          drawSideChart(view='dots');
+          box.transition().duration(800).attr('opacity', 0);
+          drawScatter(dataset, window.selectedID, cat, catLength);
+          clicked[cat] = true;
+        } //end if
+      } //end for
+      explodeClicked = true;
+    } //end if
+
+    else if (explodeClicked) {
+      explodeCircle.transition().duration(500).attr('cx', margin.left*1.7);
+      oval.transition().duration(500).attr('fill', '#898989');
+      for (cat in clicked) {
+        if (clicked[cat]) {
+          desc.remove();
+          drawSideChart(view='box');
+          box.transition().duration(1300).attr('opacity', 1);
+          var scatters = d3.selectAll('.dot');
+          scatters.attr('clip-path', 'url(#chart-area)')
+                  .transition()
+                  .duration(function(d, i) {
+                      if (i%6 === 0) {return 600 + Math.random()*100}
+                      else if (i%5 === 0) {return 900 + Math.random()*100}
+                      else if (i%4 === 0) {return 1200 + Math.random()*100}
+                      else if (i%3 === 0) {return 1500 + Math.random()*100}
+                      else if (i%2 === 0) {return 1800 + Math.random()*100}
+                      else {return 2100 + Math.random()*100}
+                  })
+                  .attr('cx', -10)
+                  .attr('opacity', 0)
+                  .remove();
+          clicked[cat] = false;
+        } //end if
+      } //end for
+      explodeClicked = false;
+    } //end else if
+  }) //end explodeButton.on
+} //end delayScatters
