@@ -150,15 +150,16 @@ function getScales(finalData) {
 } //end getScales
 
 
+
 function drawOptions() {
-  var labels = [{'label': 'Judge Race', 'x': 16, 'id': 'judge_race'},
-                {'label': 'Judge Gender', 'x': 29, 'id': 'judge_gender'},
-                {'label': 'Judge Party Affiliation', 'x': 42, 'id': 'appointed_by'},
-                {'label': 'Defendant Race', 'x': 55, 'id': 'def_race'},
-                {'label': 'Defendant Gender', 'x': 68, 'id': 'def_gender'},
-                {'label': 'Victim Gender', 'x': 81, 'id': 'vic_gender'},
-                {'label': 'Method of Recruitment', 'x' : 94, 'id': 'recruit'},
-                {'label': 'Type of Trafficking', 'x': 107, 'id': 'type'},
+  var labels = [{'label': 'Type of Trafficking', 'x': 16, 'id': 'type'},
+                {'label': 'Defendant Race', 'x': 29, 'id': 'def_race'},
+                {'label': 'Defendant Gender', 'x': 42, 'id': 'def_gender'},
+                {'label': 'Victim Gender', 'x': 55, 'id': 'vic_gender'},
+                {'label': 'Method of Recruitment', 'x' : 68, 'id': 'recruit'},
+                {'label': 'Judge Race', 'x': 81, 'id': 'judge_race'},
+                {'label': 'Judge Gender', 'x': 94, 'id': 'judge_gender'},
+                {'label': 'Judge Party Affiliation', 'x': 107, 'id': 'appointed_by'},
                 {'label': 'U.S. Region', 'x': 120, 'id': 'region'},
                 {'label': 'Year', 'x': 133, 'id': 'year'}]
 
@@ -173,11 +174,11 @@ function drawOptions() {
           .text('Examine by:')
 
   //create groups for include options
-  options = sidebar.selectAll("circle.include-circles")
+  options = sidebar.selectAll("circle.option-groups")
                         .data(labels)
                         .enter()
                         .append('g')
-                        .attr('class', 'include-circles')
+                        .attr('class', 'option-groups')
                         .attr('id', function(d) {return d.id})
 
   //append circles for include options
@@ -185,7 +186,7 @@ function drawOptions() {
           .attr('cx', 4)
           .attr('cy', function(d) {return d.x})
           .attr('r', 4)
-          .attr('id', function(d) {return 'circle_' + d.id})
+          .attr('id', function(d) {console.log(d.id); return 'circle_' + d.id})
           .attr('fill', 'white')
           .attr('stroke-width', 0.25)
           .attr('stroke', 'black')
@@ -294,6 +295,10 @@ function drawOptions() {
 
     // mouseover effect:
     // https://stackoverflow.com/questions/36326683/d3-js-how-can-i-set-the-cursor-to-hand-when-mouseover-these-elements-on-svg-co
+
+    //default
+    var defaultCircle = d3.select('#circle_type')
+    selectVariable(defaultCircle, 'type')
 
 }
 
@@ -574,12 +579,15 @@ function drawChart(sortMethod, selectedVariable, method='update') {
     var stats = {'min': 'min: ', 'q1': '25%: ', 'median': 'median: ',
                   'q3': '75%: ', 'max': 'max: ', 'count': 'cases: '}
 
+    d3.select(this)
+      .style('cursor', 'pointer')
+
     //comparison line
     chart.append('line')
           .attr('x1', -10)
           .attr('y1', 0)
           .attr('x2', -10)
-          .attr('y2', chartHeight)
+          .attr('y2', 1.1*chartHeight)
           .attr('stroke-width', 3)
           .attr('stroke', 'black')
           .attr('stroke-dasharray', '5,5')
@@ -589,7 +597,7 @@ function drawChart(sortMethod, selectedVariable, method='update') {
           .attr('x1', yScale(xValues.median))
           .attr('y1', 0)
           .attr('x2', yScale(xValues.median))
-          .attr('y2', chartHeight)
+          .attr('y2', 1.1*chartHeight)
           .attr('stroke-width', 2)
           .attr('stroke', 'black')
           .attr('stroke-dasharray', '5,5')
@@ -906,6 +914,15 @@ function sortPlots(sortMethod) {
 
 }
 
+function selectVariable(circle, id) {
+  circle.attr('fill', 'black')
+  window.value = id
+}
+
+function unselectVariable(circle) {
+  circle.attr('fill', 'white')
+}
+
 //update boxplots
 function update() {
 
@@ -945,9 +962,9 @@ function update() {
       clickedID = this.id
       for (c of optionCircles) {
         if (c._groups[0][0].id === 'circle_' + clickedID) {
-          c.attr('fill', 'black')
+          selectVariable(c, clickedID)
         }
-        else {c.attr('fill', 'white')}
+        else {unselectVariable(c)}
       }
 
       var explodeCircle = d3.select('#explode-button');
@@ -957,7 +974,6 @@ function update() {
       drawSideChart(view='box');
       removePlots(method='update');
       drawChart(sortMethod = 'ascending', selectedVariable = clickedID, method='update');
-      window.value=clickedID;
     })
   }
 }; //end update process
