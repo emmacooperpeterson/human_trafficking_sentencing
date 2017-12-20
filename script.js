@@ -210,9 +210,20 @@ function drawOptions() {
   //append text for include options
   options.append('text')
           .attr('class', 'include-text')
+          .attr('id', function(d) {return d.id + '_text'})
           .attr('x', 12)
           .attr('y', function(d, i) {return 18 + i*13})
           .text(function(d) {return d.label})
+          .on('mouseover', function(d) {
+                d3.select(this)
+                  .style('cursor', 'pointer')
+                  .attr('font-weight', 'bold')
+          })
+          .on('mouseout', function(d) {
+                d3.select(this)
+                  .style('cursor', 'default')
+                  .attr('font-weight', 'normal')
+          })
 
   //append sort header
   sidebar.append('text')
@@ -241,25 +252,38 @@ function drawOptions() {
               .attr('fill', 'white')
               .attr('stroke-width', 0.25)
               .attr('stroke', 'black')
-              // .on('mouseover', function(d) {
-              //       d3.select(this)
-              //         .style('cursor', 'pointer')
+              .on('mouseover', function(d) {
+                    d3.select(this)
+                      .style('cursor', 'pointer')
               //         .transition()
               //         .duration(500)
-              //         .attr('fill', '#898989')})
-              // .on('mouseout', function(d) {
-              //       d3.select(this)
-              //         .style('cursor', 'default')
+              //         .attr('fill', '#898989')
+              })
+              .on('mouseout', function(d) {
+                    d3.select(this)
+                      .style('cursor', 'default')
               //         .transition()
               //         .duration(500)
-              //         .attr('fill', 'white')})
+              //         .attr('fill', 'white')
+              })
 
   //append text for sort options
   sortOptions.append('text')
               .attr('class', 'sort-text')
+              .attr('id', function(d) {return d.id + '_text'})
               .attr('x', 12)
               .attr('y', function(d, i) {return 183 + i*13})
               .text(function(d) {return d.label})
+              .on('mouseover', function(d) {
+                    d3.select(this)
+                      .style('cursor', 'pointer')
+                      .attr('font-weight', 'bold')
+              })
+              .on('mouseout', function(d) {
+                    d3.select(this)
+                      .style('cursor', 'default')
+                      .attr('font-weight', 'normal')
+              })
 
   //explode all text and button
   sidebar.append('text')
@@ -1005,6 +1029,9 @@ function drawGrid() {
 
 
 function selectOption(circle, id) {
+  var text = d3.select('#' + id + '_text')
+  text.on('mouseout', function() {})
+  text.attr('font-weight', 'bold')
   circle.attr('fill', 'black')
 
   if (id === 'ascending' | id === 'descending') {
@@ -1020,6 +1047,18 @@ function selectOption(circle, id) {
 
 function unselectOption(circle) {
   circle.attr('fill', 'white')
+  var textID = circle._groups[0][0].nextSibling.id
+  console.log(textID)
+  var text = d3.select('#' + textID)
+
+  text.on('mouseout', function(d) {
+        d3.select(this)
+          .style('cursor', 'default')
+          .attr('font-weight', 'normal')
+  })
+
+  text.attr('font-weight', 'normal')
+
 }; //end unselectOption
 
 
