@@ -573,8 +573,8 @@ function drawChart(sortMethod, selectedVariable, method='update') {
         .append('rect')
         .attr('x', 0)
         .attr('y', 0)
-        .attr('width', width)
-        .attr('height', height)
+        .attr('width', chartWidth)
+        .attr('height', chartHeight)
 
   tooltips();
   // //tooltip on
@@ -890,7 +890,7 @@ function drawGrid() {
         .attr('class', 'permanent-footnote')
         .attr('opacity', 0)
         .on('click', function() {
-          window.open('www.humantraffickingdata.org')
+          window.open('http://www.humantraffickingdata.org')
         })
         .on('mouseover', function(d) {
           d3.select(this)
@@ -1146,7 +1146,7 @@ function drawScatter(dataset, variable, category, catLength) {
           else {return 1300 + Math.random()*100}
         })
         .ease(d3.easeBackOut)
-        .attr('cx', function(d) {return yScale(d.sentence) + Math.random()*10})
+        .attr('cx', function(d) {return yScale(d.sentence) + Math.random()*5})
         .attr('cy', function(d, i) {
           if (i%2 === 0) {
             return xScale(d[variable]) + xScale.bandwidth()/2 + Math.random() * chartHeight/(3*catLength)
