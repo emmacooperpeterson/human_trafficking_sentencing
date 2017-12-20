@@ -56,7 +56,9 @@ var sidebar = svg.append('g')
 svg.append('text')
     .attr('x', margin.left)
     .attr('y', margin.top)
+    .attr('id', 'title')
     .text('Human Trafficking: How Do Prison Sentences Vary?')
+
 //load data
 d3.json("ht_sentencing.json", function(error, data) {
   if (error) throw error;
@@ -1026,7 +1028,7 @@ function sortPlots(sortMethod) {
   drawSideChart(view='box');
   removePlots(method='sort');
   drawChart(sortMethod=sortMethod, selectedVariable=window.selectedID, method='sort');
-  // window.setTimeout('delayScatters(dataset)', 3000);
+  window.setTimeout('delayScatters(dataset)', 3000);
 
 }
 
@@ -1034,10 +1036,6 @@ function sortPlots(sortMethod) {
 
 //update boxplots
 function update() {
-
-  var desc = d3.selectAll('.desc');
-  var oval = d3.select('#oval');
-  var explodeCircle = d3.select('#explode-button');
 
   var jr = d3.select('#judge_race')
   var jg = d3.select('#judge_gender')
@@ -1077,6 +1075,10 @@ function update() {
         else {unselectOption(c)}
       }
 
+      var desc = d3.selectAll('.desc');
+      var oval = d3.select('#oval');
+      var explodeCircle = d3.select('#explode-button');
+
       explodeCircle.transition().duration(500).attr('cx', margin.left*3);
       oval.transition().duration(500).attr('fill', '#898989');
       desc.remove();
@@ -1084,6 +1086,7 @@ function update() {
       removePlots(method='update');
       drawChart(sortMethod = window.sorting, selectedVariable = window.selectedID, method='update');
       window.setTimeout('delayScatters(dataset)', 1);
+
     })
   }
 }; //end update process
@@ -1196,9 +1199,6 @@ function delayScatters(dataset) {
     var desc = d3.selectAll('.desc');
     var tools = d3.selectAll('.tools')
 
-    console.log(box);
-
-
     if (!clicked[plotNum]) {
       drawScatter(dataset, window.selectedID, plotNum, catLength);
       box.transition().duration(800).attr('opacity', 0);
@@ -1235,6 +1235,10 @@ function delayScatters(dataset) {
     else {
           desc.remove();
           drawSideChart(view='box');
+          explodeCircle.transition().duration(500).attr('cx', margin.left*3);
+          var oval = d3.select('#oval');
+          oval.transition().duration(500).attr('fill', '#898989');
+
     }
   }) //end categories.on
 
@@ -1262,7 +1266,6 @@ function delayScatters(dataset) {
         } //end if
       } //end for
       explodeClicked = true;
-      console.log(explodeClicked)
 
     } //end if
 
@@ -1292,7 +1295,6 @@ function delayScatters(dataset) {
         } //end if
       } //end for
       explodeClicked = false;
-      console.log(explodeClicked)
 
     } //end else if
   }) //end explodeButton.on

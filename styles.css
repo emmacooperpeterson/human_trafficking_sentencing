@@ -7,8 +7,6 @@ svg {background-color: #f4f4f4;}
     height: 0;
     width: 100%;
     padding: 0;
-    /* padding-bottom will be overwritten by JavaScript later */
-    padding-bottom: 100%;
 }
 
 #chart > svg {
@@ -19,9 +17,20 @@ svg {background-color: #f4f4f4;}
     top: 0;
 }
 
+#title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+}
+
+/*
+html body {
+  background-color: #f4f4f4;;
+}
+*/
+
 .var-labels {
   font-family: 'Courier New', serif;
-  font-size: 7px;
+  font-size: 6px;
 }
 
 .tools {
