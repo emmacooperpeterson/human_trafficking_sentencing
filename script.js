@@ -163,7 +163,7 @@ function drawOptions() {
                 {'label': 'Judge Gender', 'x': 94, 'id': 'judge_gender'},
                 {'label': 'Judge Party Affiliation', 'x': 107, 'id': 'appointed_by'},
                 {'label': 'U.S. Region', 'x': 120, 'id': 'region'},
-                {'label': 'Year', 'x': 133, 'id': 'year'}]
+                {'label': 'Year', 'x': 133, 'id': 'year_group'}]
 
   var sorting = [{'label': 'Ascending', 'x': 181, 'id': 'ascending'},
                  {'label': 'Descending', 'x': 194, 'id': 'descending'}]
@@ -192,18 +192,20 @@ function drawOptions() {
           .attr('fill', 'white')
           .attr('stroke-width', 0.25)
           .attr('stroke', 'black')
-          // .on('mouseover', function(d) {
-          //       d3.select(this)
-          //         .style('cursor', 'pointer')
-          //         .transition()
-          //         .duration(500)
-          //         .attr('fill', '#898989')})
-          // .on('mouseout', function(d) {
-          //       d3.select(this)
-          //         .style('cursor', 'default')
-          //         .transition()
-          //         .duration(500)
-          //         .attr('fill', 'white')})
+          .on('mouseover', function(d) {
+                d3.select(this)
+                  .style('cursor', 'pointer')
+                  // .transition()
+                  // .duration(500)
+                  // .attr('fill', '#898989')
+          })
+          .on('mouseout', function(d) {
+                d3.select(this)
+                  .style('cursor', 'default')
+                  // .transition()
+                  // .duration(500)
+                  // .attr('fill', 'white')
+          })
 
   //append text for include options
   options.append('text')
@@ -1073,7 +1075,7 @@ function update() {
   var mr = d3.select('#recruit')
   var tt = d3.select('#type')
   var rg = d3.select('#region')
-  var yr = d3.select('#year')
+  var yr = d3.select('#year_group')
 
   var jrCircle = d3.select('#circle_judge_race')
   var jgCircle = d3.select('#circle_judge_gender')
@@ -1084,7 +1086,7 @@ function update() {
   var mrCircle = d3.select('#circle_recruit')
   var ttCircle = d3.select('#circle_type')
   var rgCircle = d3.select('#circle_region')
-  var yrCircle = d3.select('#circle_year')
+  var yrCircle = d3.select('#circle_year_group')
 
   var options = [jr, jg, jpa, dr, dg, vg, mr, tt, rg, yr]
 
