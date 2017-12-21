@@ -1,6 +1,8 @@
 /* BACKGROUND AND HEADER */
 
-svg {background-color: #f4f4f4;}
+html body {
+  background-color: #f4f4f4;;
+}
 
 #chart {
     position: relative;
@@ -23,30 +25,9 @@ svg {background-color: #f4f4f4;}
 }
 
 
-html body {
-  background-color: #f4f4f4;;
-}
 
 
-.var-labels {
-  font-family: 'Courier New', serif;
-  font-size: 6px;
-}
-
-.tools {
-  font-family: 'Courier New', serif;
-  font-size: 6px;
-}
-
-.lines {
-  stroke-width: 0.25;
-}
-
-.permanent-footnote, .variable-footnote {
-  font-family: 'Courier New', serif;
-  font-size: 5px;
-}
-
+/* MENU AREA */
 .include-text, .sort-text {
   font-family: 'Courier New', serif;
   font-size: 7px;
@@ -57,9 +38,27 @@ html body {
   font-size: 9px;
 }
 
+
+
+
+/* CHART AREA */
+.var-labels {
+  font-family: 'Courier New', serif;
+  font-size: 6px;
+}
+
+.var-labels:hover {
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .axisLabel {
   font-family: 'Montserrat', sans-serif;
   font-size: 8px;
+}
+
+.lines {
+  stroke-width: 0.25;
 }
 
 .tick {
@@ -67,12 +66,21 @@ html body {
   font-size: 7px;
 }
 
-.box-desc-text, .dot-desc-text {
+.tools {
+  font-family: 'Courier New', serif;
+  font-size: 6px;
+}
+
+.permanent-footnote, .variable-footnote {
   font-family: 'Courier New', serif;
   font-size: 5px;
 }
 
-.var-labels:hover {
-  font-weight: bold;
-  cursor: pointer;
+
+
+
+/* CHART DIAGRAM */
+.box-desc-text, .dot-desc-text {
+  font-family: 'Courier New', serif;
+  font-size: 5px;
 }

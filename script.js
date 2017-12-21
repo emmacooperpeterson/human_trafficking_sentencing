@@ -85,8 +85,6 @@ d3.json("ht_sentencing.json", function(error, data) {
   drawSideChart();
   drawChart(sortMethod = 'ascending', selectedVariable = 'type', method='update');
   drawGrid();
-  //xLabel();
-  //applyFootnotes();
   update();
   window.setTimeout('delayScatters(dataset)', 1);
   window.setTimeout('getSortMenu()', 1);
@@ -110,9 +108,9 @@ function getData() {
               })
       .entries(filteredData);
 
-  if (sortMethod == 'ascending') {
+  if (sortMethod === 'ascending') {
     nestedData.sort(function(a, b) {
-            if (a.value.median == b.value.median) {
+            if (a.value.median === b.value.median) {
               return d3.ascending(a.value.q3, b.value.q3)
             }
 
@@ -121,23 +119,22 @@ function getData() {
     ); //end sort
   } //end if
 
-  else if (sortMethod == 'descending') {
+  else if (sortMethod === 'descending') {
     nestedData.sort(function(a, b) {
-            if (a.value.median == b.value.median) {
+            if (a.value.median === b.value.median) {
               return d3.descending(a.value.q3, b.value.q3)
             }
 
             else {return d3.descending(a.value.median, b.value.median)}
             }
     ); //end sort
-  } //end else if
+  }; //end else if
 
   return nestedData;
-} //end getData
-//
-//
-//
-//
+}; //end getData
+
+
+
 function getScales(finalData) {
 
   var xScale = d3.scaleBand()
@@ -163,25 +160,25 @@ function drawOptions() {
                 {'label': 'Judge Gender', 'x': 94, 'id': 'judge_gender'},
                 {'label': 'Judge Party Affiliation', 'x': 107, 'id': 'appointed_by'},
                 {'label': 'U.S. Region', 'x': 120, 'id': 'region'},
-                {'label': 'Year', 'x': 133, 'id': 'year_group'}]
+                {'label': 'Year', 'x': 133, 'id': 'year_group'}];
 
   var sorting = [{'label': 'Ascending', 'x': 181, 'id': 'ascending'},
-                 {'label': 'Descending', 'x': 194, 'id': 'descending'}]
+                 {'label': 'Descending', 'x': 194, 'id': 'descending'}];
 
   //append include header
   sidebar.append('text')
           .attr('class', 'side-header')
           .attr('x', 0)
           .attr('y', 5)
-          .text('Examine by:')
+          .text('Examine by:');
 
-  //create groups for include options
+  //create groups for examine by options
   options = sidebar.selectAll("circle.option-groups")
                         .data(labels)
                         .enter()
                         .append('g')
                         .attr('class', 'option-groups')
-                        .attr('id', function(d) {return d.id})
+                        .attr('id', function(d) {return d.id});
 
   //append circles for include options
   options.append('circle')
@@ -195,17 +192,21 @@ function drawOptions() {
           .on('mouseover', function(d) {
                 d3.select(this)
                   .style('cursor', 'pointer')
-                  // .transition()
-                  // .duration(500)
-                  // .attr('fill', '#898989')
+
+                var label = this.nextSibling
+                var text = d3.select('#' + label.id)
+                text.attr('font-weight', 'bold')
+
           })
           .on('mouseout', function(d) {
                 d3.select(this)
                   .style('cursor', 'default')
-                  // .transition()
-                  // .duration(500)
-                  // .attr('fill', 'white')
-          })
+
+                var label = this.nextSibling
+                var text = d3.select('#' + label.id)
+                text.attr('font-weight', 'normal')
+
+          });
 
   //append text for include options
   options.append('text')
@@ -223,25 +224,26 @@ function drawOptions() {
                 d3.select(this)
                   .style('cursor', 'default')
                   .attr('font-weight', 'normal')
-          })
+          });
 
   //append sort header
   sidebar.append('text')
           .attr('class', 'side-header')
           .attr('x', 0)
           .attr('y', 170)
-          .text('Sort:')
+          .text('Sort:');
+
+  //create group for sort menu
+  sortMenu = sidebar.append('g')
+                    .attr('id', 'sort-menu');
 
   //create groups for sort options
-  sortMenu = sidebar.append('g')
-                    .attr('id', 'sort-menu')
-
-  sortOptions = sortMenu.selectAll("circle.sort-circles")
+  sortOptions = sortMenu.selectAll('circle.sort-circles')
                         .data(sorting)
                         .enter()
                         .append('g')
                         .attr('class', 'sort-circles')
-                        .attr('id', function(d) {return d.id})
+                        .attr('id', function(d) {return d.id});
 
   //append circles for sort options
   sortOptions.append('circle')
@@ -255,17 +257,19 @@ function drawOptions() {
               .on('mouseover', function(d) {
                     d3.select(this)
                       .style('cursor', 'pointer')
-              //         .transition()
-              //         .duration(500)
-              //         .attr('fill', '#898989')
+
+                      var label = this.nextSibling
+                      var text = d3.select('#' + label.id)
+                      text.attr('font-weight', 'bold')
               })
               .on('mouseout', function(d) {
                     d3.select(this)
                       .style('cursor', 'default')
-              //         .transition()
-              //         .duration(500)
-              //         .attr('fill', 'white')
-              })
+
+                      var label = this.nextSibling
+                      var text = d3.select('#' + label.id)
+                      text.attr('font-weight', 'normal')
+              });
 
   //append text for sort options
   sortOptions.append('text')
@@ -283,17 +287,17 @@ function drawOptions() {
                     d3.select(this)
                       .style('cursor', 'default')
                       .attr('font-weight', 'normal')
-              })
+              });
 
   //explode all text and button
   sidebar.append('text')
           .attr('x', 0)
           .attr('y', 231)
           .attr('class', 'side-header')
-          .text('Explode plots:')
+          .text('Explode plots:');
 
   sidebar.append('rect')
-          .attr('x', margin.left*2.7)
+          .attr('x', 2.7*margin.left)
           .attr('y', 221)
           .attr('height', 15)
           .attr('width', 23)
@@ -309,7 +313,7 @@ function drawOptions() {
           })
 
     sidebar.append('circle')
-              .attr('cx', margin.left*3) //3.32 on transition...
+              .attr('cx', 3*margin.left)
               .attr('cy', 228.5)
               .attr('r', 6)
               .attr('id', 'explode-button')
@@ -321,49 +325,48 @@ function drawOptions() {
                   d3.select(this).style('cursor', 'default')
                 })
 
-    // mouseover effect:
-    // https://stackoverflow.com/questions/36326683/d3-js-how-can-i-set-the-cursor-to-hand-when-mouseover-these-elements-on-svg-co
-
-    //defaults
+    //set defaults
     var defaultVariable = d3.select('#circle_type')
     selectOption(defaultVariable, 'type')
 
     var defaultSort = d3.select('#circle_ascending')
     selectOption(defaultSort, 'ascending')
-}
-
+}; //end drawOptions
 
 
 
 function drawSideChart(view='box') {
 
-  var xPoints = {'min': [margin.left, 'minimum'], 'q1': [margin.left+32.75, '25th percentile'],
-                'med': [margin.left+65.5, 'median'], 'q3': [margin.left+98.25, '75th percentile'],
-                'max': [smallWidth-margin.left*3, 'maximum']
+  var xPoints = {'min': [margin.left, 'minimum'],
+                 'q1': [margin.left + 32.75, '25th percentile'],
+                 'med': [margin.left + 65.5, 'median'],
+                 'q3': [margin.left + 98.25, '75th percentile'],
+                 'max': [smallWidth - 3*margin.left, 'maximum']
                 };
 
-  if (view == 'box') {
+  if (view === 'box') {
 
     for (var x in xPoints) {
+
       //append text
       smallChart.append('text')
                 .attr('class', 'desc box-desc box-desc-text')
-                .attr('transform', 'rotate(25' + ',' + xPoints[x][0] + ',' + (margin.top*1.6) + ')')
+                .attr('transform', 'rotate(25' + ',' + xPoints[x][0] + ',' + (1.6*margin.top) + ')')
                 .attr('x', xPoints[x][0])
-                .attr('y', margin.top*1.6)
+                .attr('y', 1.6*margin.top)
                 .text(xPoints[x][1])
-                .attr('opacity', 1)
+                .attr('opacity', 1);
 
       //append lines
       smallChart.append('line')
                 .attr('class', 'desc box-desc')
                 .attr('x1', xPoints[x][0])
-                .attr('y1', margin.top*1.15)
+                .attr('y1', 1.15*margin.top)
                 .attr('x2', xPoints[x][0])
-                .attr('y2', margin.top*1.4)
+                .attr('y2', 1.4*margin.top)
                 .attr('stroke-width', 0.25)
                 .attr('stroke', 'black')
-                .attr('opacity', 1)
+                .attr('opacity', 1);
     } //end loop
 
     //append min and max bars
@@ -396,20 +399,21 @@ function drawSideChart(view='box') {
               .attr('opacity', 1);
   }
 
-  else if (view == 'dots') {
-
-    Math.seedrandom('setting-the-seed') //https://www.npmjs.com/package/seedrandom
-
-    var dots = []
-
-    for (i=0; i<10; i++) {
-      dots.push(margin.left*((Math.random() * 6) + 1))
-    }
+  else if (view === 'dots') {
 
     var description = ['Each dot represents one defendant. Its horizonal',
                         'position represents the prison sentence that the',
-                        'defendant received.']
+                        'defendant received.'];
 
+    //create list of random x-values
+    Math.seedrandom('setting-the-seed'); //https://www.npmjs.com/package/seedrandom
+    var dots = [];
+
+    for (i=0; i<10; i++) {
+      dots.push(margin.left * (6*Math.random() + 1));
+    };
+
+    //append points
     smallChart.selectAll('circle')
               .data(dots)
               .enter()
@@ -417,37 +421,41 @@ function drawSideChart(view='box') {
               .attr('class', 'desc dot-desc')
               .attr('cx', function(d) {return d})
               .attr('cy', function(d, i) {
-                if (i%4 == 0) {return margin.top}
-                else if (i%3 == 0) {return margin.top*1.2 + Math.random()*10}
-                else if (i%2 == 0) {return margin.top*0.8 + Math.random()*10}
-                else {return margin.top*0.6 + Math.random()*10}})
+                if (i%4 === 0) {return margin.top}
+                else if (i%3 === 0) {return 1.2*margin.top + 10*Math.random()}
+                else if (i%2 === 0) {return 0.8*margin.top + 10*Math.random()}
+                else {return 0.6*margin.top + 10*Math.random()}})
               .attr('r', 2)
-              .attr('opacity', 0.6)
+              .attr('opacity', 0.6);
 
+    //append description
     smallChart.selectAll('text.desc')
               .data(description)
               .enter()
               .append('text')
               .attr('x', margin.left)
               .attr('y', function(d,i) {
-                 if (i === 0) {return margin.top*2}
-                 else if (i === 1) {return margin.top*2.25}
-                 else {return margin.top*2.5}
+                 if (i === 0) {return 2*margin.top}
+                 else if (i === 1) {return 2.25*margin.top}
+                 else {return 2.5*margin.top}
               })
               .attr('class', 'desc dot-desc dot-desc-text')
               .text(function(d) {return d})
-              .attr('opacity', 1)
-    }
+              .attr('opacity', 1);
+    };
 }; // end makeSideChart
+
+
 
 function drawChart(sortMethod, selectedVariable, method='update') {
 
-  finalData = getData(sortMethod, selectedVariable)
+  finalData = getData(sortMethod, selectedVariable);
   scales = getScales(finalData);
-  xScale = scales.x
-  yScale = scales.y
+  xScale = scales.x;
+  yScale = scales.y;
 
-  //create gradient to fade max lines https://www.freshconsulting.com/d3-js-gradients-the-easy-way/
+  //create gradient to fade max lines
+  //https://www.freshconsulting.com/d3-js-gradients-the-easy-way/
   var defs = chart.append("defs");
 
   var gradient = defs.append("linearGradient")
@@ -469,13 +477,6 @@ function drawChart(sortMethod, selectedVariable, method='update') {
      .attr("stop-color", "#f4f4f4")
      .attr("stop-opacity", 1);
 
-  //add variable labels
-  appendLabels(xScale, yScale, selectedVariable, method);
-
-  if (method === 'update') {
-    xLabel(selectedVariable);
-  }
-
   //create boxplot groups
   boxplotGroups = chart.selectAll("rect")
                         .data(finalData)
@@ -483,7 +484,7 @@ function drawChart(sortMethod, selectedVariable, method='update') {
                         .append('g')
                         .attr('id', function(d) {return 'plot' + d.key})
                         .attr('class', 'plot')
-                        .attr('opacity', 1)
+                        .attr('opacity', 1);
 
   //append min lines
   boxplotGroups.append("rect")
@@ -515,7 +516,7 @@ function drawChart(sortMethod, selectedVariable, method='update') {
                 .attr("x", function(d) {return yScale(d.value.q3);})
                 .attr("y", function(d) {return xScale(d.key) + xScale.bandwidth()/2 - 0.015*chartHeight;})
                 .attr("width", function(d) {
-                  if (d.value.max > 30) {return yScale(30-d.value.q3)}
+                  if (d.value.max > 30) {return yScale(30 - d.value.q3)}
                   else {return yScale(d.value.max - d.value.q3);}
                 })
                 .attr("height", 0.03*chartHeight)
@@ -600,96 +601,23 @@ function drawChart(sortMethod, selectedVariable, method='update') {
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', chartWidth)
-        .attr('height', chartHeight)
+        .attr('height', chartHeight);
 
+  //add hover functionality
   tooltips();
-  // //tooltip on
-  // boxplotGroups.on('mouseover', function(d) {
-  //   var plot = d3.select(this);
-  //   var xValues = plot._groups[0][0].__data__.value;
-  //   var y = parseFloat(plot._groups[0][0].childNodes[0].attributes[1].value);
-  //   var color = plot._groups[0][0].__data__.key;
-  //   var coordinates = d3.mouse(this);
-  //   var xCoord = coordinates[0];
-  //
-  //   var stats = {'min': 'min: ', 'q1': '25%: ', 'median': 'median: ',
-  //                 'q3': '75%: ', 'max': 'max: ', 'count': 'cases: '}
-  //
-  //
-  //
-  //   //comparison line
-  //   chart.append('line')
-  //         .attr('x1', -10)
-  //         .attr('y1', 0)
-  //         .attr('x2', -10)
-  //         .attr('y2', 1.1*chartHeight)
-  //         .attr('stroke-width', 3)
-  //         .attr('stroke', 'black')
-  //         .attr('stroke-dasharray', '5,5')
-  //         .attr('opacity', 0.25)
-  //         .transition()
-  //         .duration(500)
-  //         .attr('x1', yScale(xValues.median))
-  //         .attr('y1', 0)
-  //         .attr('x2', yScale(xValues.median))
-  //         .attr('y2', chartHeight)
-  //         .attr('stroke-width', 2)
-  //         .attr('stroke', 'black')
-  //         .attr('stroke-dasharray', '5,5')
-  //         .attr('opacity', 0.25)
-  //         .attr('class', 'tools')
-  //         .attr('clip-path', 'url(#chart-area)')
-  //
-  //   //box to hold stats
-  //   chart.append('rect')
-  //         .attr('class', 'tools')
-  //         .attr('x', xCoord)
-  //         .attr('y', y + 15)
-  //         .attr('width', 2.5*margin.top)
-  //         .attr('height', 2.45*margin.top)
-  //         .attr('fill', '#f4f4f4')
-  //         .attr('opacity', 0)
-  //         .transition()
-  //         .duration(1000)
-  //         .attr('x', xCoord)
-  //         .attr('y', y + 15)
-  //         .attr('width', 2.5*margin.top)
-  //         .attr('height', 2.45*margin.top)
-  //         .attr('fill', function() {return tooltipColors[color]})
-  //         .attr('opacity', 1)
-  //
-  //   var i = margin.top
-  //   for (var v in xValues) {
-  //     label = String(xValues[v])
-  //
-  //     chart.append('text')
-  //           .attr('x', xCoord + 6)
-  //           .attr('y', y + i)
-  //           .attr('opacity', 0)
-  //           .transition()
-  //           .duration(500)
-  //           .attr('x', xCoord + 6)
-  //           .attr('y', y + i)
-  //           .attr('opacity', 1)
-  //           .attr('class', 'tools')
-  //           .text(stats[v] + label.slice(0,4));
-  //
-  //     i = i + 9
-  //   } //end loop
-  // }); //end tooltip on
-  //
-  // //tooltip off
-  // boxplotGroups.on('mouseout', function() {
-  //   d3.selectAll('.tools')
-  //     .transition()
-  //     .duration(500)
-  //     .attr('opacity', 0)
-  //     .remove();
-  //  })
+
+  //add labels
+  appendLabels(xScale, yScale, selectedVariable, method);
+
+  if (method === 'update') {
+    xLabel(selectedVariable);
+  };
 }; //end drawChart
 
 
+
 function tooltips() {
+
   //tooltip on
   boxplotGroups.on('mouseover', function(d) {
     var plot = d3.select(this);
@@ -700,9 +628,7 @@ function tooltips() {
     var xCoord = coordinates[0];
 
     var stats = {'min': 'min: ', 'q1': '25%: ', 'median': 'median: ',
-                  'q3': '75%: ', 'max': 'max: ', 'count': 'cases: '}
-
-
+                  'q3': '75%: ', 'max': 'max: ', 'count': 'cases: '};
 
     //comparison line
     chart.append('line')
@@ -725,7 +651,7 @@ function tooltips() {
           .attr('stroke-dasharray', '5,5')
           .attr('opacity', 0.25)
           .attr('class', 'tools')
-          .attr('clip-path', 'url(#chart-area)')
+          .attr('clip-path', 'url(#chart-area)');
 
     //box to hold stats
     chart.append('rect')
@@ -743,11 +669,12 @@ function tooltips() {
           .attr('width', 2.5*margin.top)
           .attr('height', 2.45*margin.top)
           .attr('fill', function() {return tooltipColors[color]})
-          .attr('opacity', 1)
+          .attr('opacity', 1);
 
-    var i = margin.top
+    //append stats
+    var i = margin.top;
     for (var v in xValues) {
-      label = String(xValues[v])
+      label = String(xValues[v]);
 
       chart.append('text')
             .attr('x', xCoord + 6)
@@ -761,8 +688,8 @@ function tooltips() {
             .attr('class', 'tools')
             .text(stats[v] + label.slice(0,4));
 
-      i = i + 9
-    } //end loop
+      i = i + 9;
+    }; //end loop
   }); //end tooltip on
 
   //tooltip off
@@ -772,45 +699,48 @@ function tooltips() {
       .duration(500)
       .attr('opacity', 0)
       .remove();
-   })
-}
+   });
+}; //end tooltips
+
 
 
 function appendLabels(xScale, yScale, selectedVariable, method) {
 
-  var races = {0: 'White', 1: 'Black', 2: 'Hispanic', 3: 'Asian', 4: 'Indian', 5: 'Other'}
-  var genders = {0: 'Male', 1: 'Female'}
-  var parties = {0: 'Democrat', 1: 'Republican'}
+  var races = {0: 'White', 1: 'Black', 2: 'Hispanic', 3: 'Asian', 4: 'Indian', 5: 'Other'};
+  var genders = {0: 'Male', 1: 'Female'};
+  var parties = {0: 'Democrat', 1: 'Republican'};
   var methods = {0: 'Unknown/other', 1: 'Online', 2: 'Kidnap', 3: 'Face-to-Face',
-                4: 'Telephone', 5: 'Family', 6: 'Newspaper'}
-  var types = {0: 'Labor trafficking', 1: 'Adult sex trafficking', 2: 'Minor sex trafficking'}
-  var regions = {0: 'South', 1: 'Northeast', 2: 'West', 3: 'Midwest'}
-  var years = {0: '2000-2003', 1: '2004-2007', 2: '2008-2011', 3: '2012-2015'}
+                4: 'Telephone', 5: 'Family', 6: 'Newspaper'};
+  var types = {0: 'Labor trafficking', 1: 'Adult sex trafficking', 2: 'Minor sex trafficking'};
+  var regions = {0: 'South', 1: 'Northeast', 2: 'West', 3: 'Midwest'};
+  var years = {0: '2000-2003', 1: '2004-2007', 2: '2008-2011', 3: '2012-2015'};
 
   var labels = {'judge_race': races, 'judge_gender': genders,
                 'appointed_by': parties, 'def_race': races,
                 'def_gender': genders, 'vic_gender': genders,
                 'recruit': methods, 'type': types, 'region': regions,
-                'year_group': years}
+                'year_group': years};
 
+  //append category labels on right-hand side
   var varLabels = chart.selectAll(".text")
-        .data(finalData)
-        .enter()
-        .append("text")
-        .attr('x', 1.01*chartWidth)
-        .attr('y', function(d) {return xScale(d.key) + xScale.bandwidth()/2 + 1;})
-        .attr('fill', '#f4f4f4')
-        .transition()
-        .duration(1500)
-        .attr('class', 'var-labels')
-        .attr('id', function(d) {return 'label' + d.key})
-        .attr('x', 1.01*chartWidth)
-        .attr('y', function(d) {return xScale(d.key) + xScale.bandwidth()/2 + 1;})
-        .attr('text-anchor', 'left')
-        .attr('alignment-baseline', 'middle')
-        .attr('fill', 'black')
-        .text(function(d) {return labels[selectedVariable][d.key]})
+                        .data(finalData)
+                        .enter()
+                        .append("text")
+                        .attr('x', 1.01*chartWidth)
+                        .attr('y', function(d) {return xScale(d.key) + xScale.bandwidth()/2 + 1;})
+                        .attr('fill', '#f4f4f4')
+                        .transition()
+                        .duration(1500)
+                        .attr('class', 'var-labels')
+                        .attr('id', function(d) {return 'label' + d.key})
+                        .attr('x', 1.01*chartWidth)
+                        .attr('y', function(d) {return xScale(d.key) + xScale.bandwidth()/2 + 1;})
+                        .attr('text-anchor', 'left')
+                        .attr('alignment-baseline', 'middle')
+                        .attr('fill', 'black')
+                        .text(function(d) {return labels[selectedVariable][d.key]});
 
+  //append variable-specific footnotes
   if (method === 'update') {
     var footnotes = {'type':  'Some cases involve multiple types of trafficking.' +
                           ' To avoid confusion, cases included here involved' +
@@ -819,7 +749,7 @@ function appendLabels(xScale, yScale, selectedVariable, method) {
                   'vic_gender': 'Some cases involve victims of multiple genders.' +
                                 ' To avoid confusion, cases included here involved' +
                                 ' one of these two genders exclusively.'
-                }
+    };
 
     if (selectedVariable === 'type' || selectedVariable === 'vic_gender') {
       chart.append('text')
@@ -828,19 +758,18 @@ function appendLabels(xScale, yScale, selectedVariable, method) {
             .transition()
             .duration(1000)
             .attr('x', 0)
-            .attr('y', chartHeight + margin.top*2.75)
+            .attr('y', chartHeight + 2.75*margin.top)
             .attr('opacity', 1)
-            .text(footnotes[selectedVariable])
-    }
+            .text(footnotes[selectedVariable]);
+    };
   };
-
 }; //end appendLabels
-//
-//
-//
-//
+
+
+
 function xLabel(selectedVariable) {
 
+  //append label to x-axis
   chart.append("text")
     .attr('transform', 'rotate(-90' + ',' + -10 + ',' + chartHeight/2 + ')')
     .attr("y", chartHeight/2)
@@ -866,11 +795,11 @@ function drawGrid() {
 
   finalData = getData();
   scales = getScales(finalData);
-  yScale = scales.y
+  yScale = scales.y;
 
   //draw y axis
   var grid = chart.append('g')
-                  .attr('id', 'grid')
+                  .attr('id', 'grid');
 
   grid.append('g')
       .call(d3.axisBottom(yScale)
@@ -878,30 +807,32 @@ function drawGrid() {
               .tickSizeOuter(0)
               .tickPadding(1.015*chartHeight)
               .tickValues([0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30]))
-      .attr('id', 'grid-ticks')
+      .attr('id', 'grid-ticks');
 
-  //create gridlines https://bl.ocks.org/d3noob/c506ac45617cf9ed39337f99f8511218
-  function make_x_gridlines() {return d3.axisBottom(yScale)}
+  //create gridlines
+  //https://bl.ocks.org/d3noob/c506ac45617cf9ed39337f99f8511218
+  function make_x_gridlines() {return d3.axisBottom(yScale)};
 
-  //draw gridlines https://bl.ocks.org/d3noob/c506ac45617cf9ed39337f99f8511218
+  //draw gridlines
   grid.append("g")
         .attr("class", "lines")
         .call(make_x_gridlines()
             .tickSize(chartHeight)
             .tickFormat("")
-            .tickValues([0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30]))
+            .tickValues([0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30]));
 
-  //remove horizonal lines from y axis https://bl.ocks.org/mbostock/3371592
+  //remove horizonal lines from y axis
+  //https://bl.ocks.org/mbostock/3371592
   function customYAxis(g) {
     grid.call(yScale);
     grid.select(".domain").remove();
-  }
+  };
 
   //run this twice because there are two horizonal lines to remove
   for (i=0; i<2; i++) {
     grid.append("g")
          .call(customYAxis);
-  }
+  };
 
   //y axis label
   grid.append("text")
@@ -923,7 +854,7 @@ function drawGrid() {
             .style('cursor', 'pointer')
             .transition()
             .duration(500)
-            .style('opacity', 0.5)
+            .style('opacity', 0.4)
         })
         .on('mouseout', function(d) {
             d3.select(this)
@@ -935,9 +866,9 @@ function drawGrid() {
         .transition()
         .duration(1000)
         .attr('x', 0)
-        .attr('y', chartHeight + margin.top*1.5)
+        .attr('y', chartHeight + 1.5*margin.top)
         .attr('opacity', 1)
-        .text('Source: www.HumanTraffickingData.org')
+        .text('Source: www.HumanTraffickingData.org');
 
   chart.append('text')
       .attr('class', 'permanent-footnote links')
@@ -950,7 +881,7 @@ function drawGrid() {
           .style('cursor', 'pointer')
           .transition()
           .duration(500)
-          .style('opacity', 0.5)
+          .style('opacity', 0.4)
       })
       .on('mouseout', function(d) {
           d3.select(this)
@@ -962,9 +893,9 @@ function drawGrid() {
       .transition()
       .duration(1000)
       .attr('x', 112)
-      .attr('y', chartHeight + margin.top*1.5)
+      .attr('y', chartHeight + 1.5*margin.top)
       .attr('opacity', 1)
-      .text('| view code')
+      .text('| View code');
 
   chart.append('text')
         .attr('class', 'permanent-footnote')
@@ -972,11 +903,11 @@ function drawGrid() {
         .transition()
         .duration(1000)
         .attr('x', 0)
-        .attr('y', chartHeight + margin.top*2)
+        .attr('y', chartHeight + 2*margin.top)
         .attr('opacity', 1)
         .text('Sentences longer than 30 years are more than 1.5' +
               ' times higher than the 75th percentile and are' +
-              ' therefore considered outliers.')
+              ' therefore considered outliers.');
 
   chart.append('text')
         .attr('class', 'permanent-footnote')
@@ -984,188 +915,161 @@ function drawGrid() {
         .transition()
         .duration(1000)
         .attr('x', 0)
-        .attr('y', chartHeight + margin.top*2.25)
+        .attr('y', chartHeight + 2.25*margin.top)
         .attr('opacity', 1)
         .text('These account for about 4% of all sentences, ' +
               'and are excluded from this graph. Hover over each plot ' +
-              'to view actual maximum sentences.')
-
+              'to view actual maximum sentences.');
 }; //end drawGrid
-//
-//
-//
-//
-// function applyFootnotes(selectedVariable='type') {
-//
-//   //variable-specific footnotes
-//   // var selectedVariable = d3.select('input[name = "variable"]:checked')
-//   //                           .property("value");
-//
-//   var footnotes = {'type':  'Some cases involve multiple types of trafficking.' +
-//                         ' To avoid confusion, cases included here involved' +
-//                         ' one of these three types exclusively.',
-//
-//                 'vic_gender': 'Some cases involve victims of multiple genders.' +
-//                               ' To avoid confusion, cases included here involved' +
-//                               ' one of these two genders exclusively.'
-//               }
-//
-//   if (selectedVariable === 'type' || selectedVariable === 'vic_gender') {
-//     chart.append('text')
-//           .attr('class', 'variable-footnote')
-//           .attr('opacity', 0)
-//           .transition()
-//           .duration(1000)
-//           .attr('x', 0)
-//           .attr('y', chartHeight + margin.top*2.75)
-//           .attr('opacity', 1)
-//           .text(footnotes[selectedVariable])
-//   };
-// }; //end applyFootnotes()
-//
-//
-
 
 
 
 function selectOption(circle, id) {
-  var text = d3.select('#' + id + '_text')
-  text.on('mouseout', function() {})
-  text.attr('font-weight', 'bold')
-  circle.attr('fill', 'black')
+  var text = d3.select('#' + id + '_text');
+  text.on('mouseout', function() {});
+  text.attr('font-weight', 'bold');
+
+  circle.attr('fill', 'black');
 
   if (id === 'ascending' | id === 'descending') {
-    window.sorting = id
+    window.sorting = id;
   }
 
   else {
-    window.selectedID = id
+    window.selectedID = id;
   }
 }; //end selectOption
 
 
 
 function unselectOption(circle) {
-  circle.attr('fill', 'white')
-  var textID = circle._groups[0][0].nextSibling.id
-  console.log(textID)
-  var text = d3.select('#' + textID)
+  circle.attr('fill', 'white');
+
+  var textID = circle._groups[0][0].nextSibling.id;
+  var text = d3.select('#' + textID);
 
   text.on('mouseout', function(d) {
         d3.select(this)
           .style('cursor', 'default')
-          .attr('font-weight', 'normal')
-  })
+          .attr('font-weight', 'normal');
+  });
 
-  text.attr('font-weight', 'normal')
-
+  text.attr('font-weight', 'normal');
 }; //end unselectOption
 
 
 
 //sort boxplots
 function getSortMenu() {
-  var asc = d3.select('#ascending')
-  var desc = d3.select('#descending')
-  var aCircle = d3.select('#circle_ascending')
-  var dCircle = d3.select('#circle_descending')
+  var asc = d3.select('#ascending');
+  var desc = d3.select('#descending');
+  var aCircle = d3.select('#circle_ascending');
+  var dCircle = d3.select('#circle_descending');
 
   asc.on('click', function() {
-    selectOption(aCircle, 'ascending')
-    unselectOption(dCircle)
-    sortPlots(sortMethod='ascending')
-  })
+    selectOption(aCircle, 'ascending');
+    unselectOption(dCircle);
+    sortPlots(sortMethod = 'ascending');
+  });
 
   desc.on('click', function() {
-    selectOption(dCircle, 'descending')
-    unselectOption(aCircle)
-    sortPlots(sortMethod='descending')
-  })
-}
+    selectOption(dCircle, 'descending');
+    unselectOption(aCircle);
+    sortPlots(sortMethod = 'descending');
+  });
+}; //end getSortMenu
 
 
 
 function sortPlots(sortMethod) {
-  //transition explode button and reset chart diagram
+
+  //reset the explode button and remove chart diagram
   var explodeCircle = d3.select('#explode-button');
   var desc = d3.selectAll('.desc');
   var oval = d3.select('#oval');
-  explodeCircle.transition().duration(500).attr('cx', margin.left*3)
-  oval.transition().duration(500).attr('fill', '#898989')
+
+  explodeCircle.transition().duration(500).attr('cx', 3*margin.left);
+  oval.transition().duration(500).attr('fill', '#898989');
   desc.remove();
+
+  //redraw chart diagram and boxplots
   drawSideChart(view='box');
   removePlots(method='sort');
   drawChart(sortMethod=sortMethod, selectedVariable=window.selectedID, method='sort');
   window.setTimeout('delayScatters(dataset)', 3000);
-
-}
-
+}; //end sortPlots
 
 
-//update boxplots
+
 function update() {
 
-  var jr = d3.select('#judge_race')
-  var jg = d3.select('#judge_gender')
-  var jpa = d3.select('#appointed_by')
-  var dr = d3.select('#def_race')
-  var dg = d3.select('#def_gender')
-  var vg = d3.select('#vic_gender')
-  var mr = d3.select('#recruit')
-  var tt = d3.select('#type')
-  var rg = d3.select('#region')
-  var yr = d3.select('#year_group')
+  //label groups
+  var jr = d3.select('#judge_race');
+  var jg = d3.select('#judge_gender');
+  var jpa = d3.select('#appointed_by');
+  var dr = d3.select('#def_race');
+  var dg = d3.select('#def_gender');
+  var vg = d3.select('#vic_gender');
+  var mr = d3.select('#recruit');
+  var tt = d3.select('#type');
+  var rg = d3.select('#region');
+  var yr = d3.select('#year_group');
 
-  var jrCircle = d3.select('#circle_judge_race')
-  var jgCircle = d3.select('#circle_judge_gender')
-  var jpaCircle = d3.select('#circle_appointed_by')
-  var drCircle = d3.select('#circle_def_race')
-  var dgCircle = d3.select('#circle_def_gender')
-  var vgCircle = d3.select('#circle_vic_gender')
-  var mrCircle = d3.select('#circle_recruit')
-  var ttCircle = d3.select('#circle_type')
-  var rgCircle = d3.select('#circle_region')
-  var yrCircle = d3.select('#circle_year_group')
+  var options = [jr, jg, jpa, dr, dg, vg, mr, tt, rg, yr];
 
-  var options = [jr, jg, jpa, dr, dg, vg, mr, tt, rg, yr]
+  //label circles
+  var jrCircle = d3.select('#circle_judge_race');
+  var jgCircle = d3.select('#circle_judge_gender');
+  var jpaCircle = d3.select('#circle_appointed_by');
+  var drCircle = d3.select('#circle_def_race');
+  var dgCircle = d3.select('#circle_def_gender');
+  var vgCircle = d3.select('#circle_vic_gender');
+  var mrCircle = d3.select('#circle_recruit');
+  var ttCircle = d3.select('#circle_type');
+  var rgCircle = d3.select('#circle_region');
+  var yrCircle = d3.select('#circle_year_group');
 
   var optionCircles = [jrCircle, jgCircle, jpaCircle, drCircle,
                         dgCircle, vgCircle, mrCircle, ttCircle,
-                        rgCircle, yrCircle]
+                        rgCircle, yrCircle];
 
+  //change circles according to what was clicked
   for (option of options) {
     option.on('click', function() {
       clickedID = this.id;
       for (c of optionCircles) {
         if (c._groups[0][0].id === 'circle_' + clickedID) {
-          selectOption(c, clickedID)
+          selectOption(c, clickedID);
         }
         else {unselectOption(c)}
-      }
+      };
 
+      //reset the explode button and remove chart diagram
       var desc = d3.selectAll('.desc');
       var oval = d3.select('#oval');
       var explodeCircle = d3.select('#explode-button');
 
-      explodeCircle.transition().duration(500).attr('cx', margin.left*3);
+      explodeCircle.transition().duration(500).attr('cx', 3*margin.left);
       oval.transition().duration(500).attr('fill', '#898989');
       desc.remove();
+
+      //redraw chart diagram and boxplots
       drawSideChart(view='box');
       removePlots(method='update');
       drawChart(sortMethod = window.sorting, selectedVariable = window.selectedID, method='update');
       window.setTimeout('delayScatters(dataset)', 1);
-
-    })
-  }
+    }); //end option.on
+  }; //end for loop
 }; //end update process
 
 
 
 function removePlots(method) {
+
   //don't remove the x label if we're just sorting
   if (method === 'update') {
-    var xLab = d3.select('#x-label')
-    var footnotes = d3.selectAll('.variable-footnote')
+    var xLab = d3.select('#x-label');
+    var footnotes = d3.selectAll('.variable-footnote');
     xLab.remove();
     footnotes.remove();
   };
@@ -1185,19 +1089,19 @@ function removePlots(method) {
 
 
 
-
-// //inspired by: http://mcaule.github.io/d3_exploding_boxplot/
+//inspired by: http://mcaule.github.io/d3_exploding_boxplot/
 function drawScatter(dataset, variable, category, catLength) {
 
   chart.selectAll('dot')
         .data(dataset)
         .enter()
-        .filter(function(d) {return d[variable] == category & d.sentence <= 30})
+        .filter(function(d) {return d[variable] === category & d.sentence <= 30})
         .append('circle')
         .attr('class', function(d) {return 'dot ' + 'dot' + d[variable]})
         .attr('opacity', 0)
         .attr('cx', yScale(15))
-        .attr('cy', function(d, i) { //https://bl.ocks.org/duhaime/14c30df6b82d3f8094e5a51e5fff739a
+        .attr('cy', function(d, i) {
+          //https://bl.ocks.org/duhaime/14c30df6b82d3f8094e5a51e5fff739a
           if (i%2 === 0) {
             return xScale(d[variable]) + xScale.bandwidth()/2
           }
@@ -1230,13 +1134,14 @@ function drawScatter(dataset, variable, category, catLength) {
 
 
 
-//https://stackoverflow.com/questions/17117712/how-to-know-if-all-javascript-object-values-are-true
+//https://stackoverflow.com/questions/17117712/
+//how-to-know-if-all-javascript-object-values-are-true
 function clickedTrue(obj) {
   for (var o in obj) {
-    if(obj[o]) {return true}
-  }
+    if (obj[o]) {return true}
+  };
   return false;
-} //end clickedTrue
+}; //end clickedTrue
 
 
 
@@ -1255,8 +1160,9 @@ function delayScatters(dataset) {
     clicked[varNum] = false;
   }
 
-
-
+  var explodeButton = d3.selectAll('#explode-button, #oval');
+  var explodeCircle = d3.select('#explode-button');
+  var explodeClicked = false;
 
   //explode plots one at at time
   labels.on('click', function() {
@@ -1267,13 +1173,15 @@ function delayScatters(dataset) {
     var desc = d3.selectAll('.desc');
     var tools = d3.selectAll('.tools')
 
+    //explode plot on click
     if (!clicked[plotNum]) {
       drawScatter(dataset, window.selectedID, plotNum, catLength);
       box.transition().duration(800).attr('opacity', 0);
-      box.on('mouseover', function(){}) //hide tooltips
+      box.on('mouseover', function() {}) //hide tooltips
       clicked[plotNum] = true;
     }
 
+    //reset plot on second click
     else if (clicked[plotNum]) {
       var scatters = d3.selectAll('.dot' + plotNum);
 
@@ -1294,57 +1202,79 @@ function delayScatters(dataset) {
       clicked[plotNum] = false;
     }
 
-    //change chart diagram if necessary
+    //show dot diagram if at least one scatterplot is showing
     if (clickedTrue(clicked)) {
           desc.remove();
           drawSideChart(view='dots');
     }
 
+    //show boxplot diagram if no scatterplots are showing
     else {
           desc.remove();
           drawSideChart(view='box');
-          explodeCircle.transition().duration(500).attr('cx', margin.left*3);
+          explodeCircle.transition().duration(500).attr('cx', 3*margin.left);
           var oval = d3.select('#oval');
           oval.transition().duration(500).attr('fill', '#898989');
-
+          explodeClicked = false;
     }
-  }) //end categories.on
+
+    //handle case when all plots are exploded individually
+    var allClicked = Object.keys(clicked).every(function(k) {return clicked[k]});
+
+    if (allClicked) {
+      var oval = d3.select('#oval');
+      explodeCircle.transition().duration(500).attr('cx', 3.32*margin.left);
+      oval.transition().duration(500).attr('fill', 'black');
+      explodeClicked = true;
+    }
+  }) //end labels.on
 
 
   //explode all
-  var explodeButton = d3.selectAll('#explode-button, #oval');
-  var explodeCircle = d3.select('#explode-button');
-  var explodeClicked = false;
-
   explodeButton.on('click', function() {
     var box = d3.selectAll('.plot');
     var desc = d3.selectAll('.desc');
     var oval = d3.select('#oval');
 
+    //explode plots
     if (!explodeClicked) {
-      explodeCircle.transition().duration(500).attr('cx', margin.left*3.32)
-      oval.transition().duration(500).attr('fill', 'black')
+
+      //move explode button
+      explodeCircle.transition().duration(500).attr('cx', 3.32*margin.left);
+      oval.transition().duration(500).attr('fill', 'black');
+
       for (cat in clicked) {
         if (!clicked[cat]) {
+
+          //reset diagram, hide boxplots, draw dots
           desc.remove();
           drawSideChart(view='dots');
           box.transition().duration(800).attr('opacity', 0);
           drawScatter(dataset, window.selectedID, cat, catLength);
+
           clicked[cat] = true;
-        } //end if
-      } //end for
+        }; //end if !clicked
+      }; //end for cat
+
       explodeClicked = true;
+    } //end if !explodeClicked
 
-    } //end if
-
+    //reset plots
     else if (explodeClicked) {
-      explodeCircle.transition().duration(500).attr('cx', margin.left*3);
+
+      //reset explode button
+      explodeCircle.transition().duration(500).attr('cx', 3*margin.left);
       oval.transition().duration(500).attr('fill', '#898989');
+
       for (cat in clicked) {
         if (clicked[cat]) {
+
+          //reset diagram and bring back boxplots
           desc.remove();
           drawSideChart(view='box');
           box.transition().duration(1300).attr('opacity', 1);
+
+          //remove dots
           var scatters = d3.selectAll('.dot');
           scatters.attr('clip-path', 'url(#chart-area)')
                   .transition()
@@ -1359,12 +1289,12 @@ function delayScatters(dataset) {
                   .attr('cx', -10)
                   .attr('opacity', 0)
                   .remove();
+
           clicked[cat] = false;
-        } //end if
-      } //end for
+        }; //end if clicked
+      }; //end for cat
+
       explodeClicked = false;
-
-    } //end else if
-  }) //end explodeButton.on
-
-} //end delayScatters
+    }; //end else if explodeClicked
+  }); //end explodeButton.on
+}; //end delayScatters
