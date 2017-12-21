@@ -874,7 +874,7 @@ function drawGrid() {
       .attr('class', 'permanent-footnote links')
       .attr('opacity', 0)
       .on('click', function() {
-        window.open('https://github.com/emmacooperpeterson/ht_responsive')
+        window.open('https://github.com/emmacooperpeterson/human_trafficking_sentencing')
       })
       .on('mouseover', function(d) {
         d3.select(this)
