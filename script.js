@@ -108,9 +108,9 @@ function getData() {
               })
       .entries(filteredData);
 
-  if (sortMethod === 'ascending') {
+  if (sortMethod == 'ascending') {
     nestedData.sort(function(a, b) {
-            if (a.value.median === b.value.median) {
+            if (a.value.median == b.value.median) {
               return d3.ascending(a.value.q3, b.value.q3)
             }
 
@@ -119,19 +119,19 @@ function getData() {
     ); //end sort
   } //end if
 
-  else if (sortMethod === 'descending') {
+  else if (sortMethod == 'descending') {
     nestedData.sort(function(a, b) {
-            if (a.value.median === b.value.median) {
+            if (a.value.median == b.value.median) {
               return d3.descending(a.value.q3, b.value.q3)
             }
 
             else {return d3.descending(a.value.median, b.value.median)}
             }
     ); //end sort
-  }; //end else if
+  } //end else if
 
   return nestedData;
-}; //end getData
+} //end getData
 
 
 
@@ -313,7 +313,7 @@ function drawOptions() {
           })
 
     sidebar.append('circle')
-              .attr('cx', 3*margin.left)
+              .attr('cx', margin.left*3)
               .attr('cy', 228.5)
               .attr('r', 6)
               .attr('id', 'explode-button')
@@ -341,10 +341,10 @@ function drawSideChart(view='box') {
                  'q1': [margin.left + 32.75, '25th percentile'],
                  'med': [margin.left + 65.5, 'median'],
                  'q3': [margin.left + 98.25, '75th percentile'],
-                 'max': [smallWidth - 3*margin.left, 'maximum']
+                'max': [smallWidth - 3*margin.left, 'maximum']
                 };
 
-  if (view === 'box') {
+  if (view == 'box') {
 
     for (var x in xPoints) {
 
@@ -399,7 +399,7 @@ function drawSideChart(view='box') {
               .attr('opacity', 1);
   }
 
-  else if (view === 'dots') {
+  else if (view == 'dots') {
 
     var description = ['Each dot represents one defendant. Its horizonal',
                         'position represents the prison sentence that the',
@@ -421,9 +421,9 @@ function drawSideChart(view='box') {
               .attr('class', 'desc dot-desc')
               .attr('cx', function(d) {return d})
               .attr('cy', function(d, i) {
-                if (i%4 === 0) {return margin.top}
-                else if (i%3 === 0) {return 1.2*margin.top + 10*Math.random()}
-                else if (i%2 === 0) {return 0.8*margin.top + 10*Math.random()}
+                if (i%4 == 0) {return margin.top}
+                else if (i%3 == 0) {return 1.2*margin.top + 10*Math.random()}
+                else if (i%2 == 0) {return 0.8*margin.top + 10*Math.random()}
                 else {return 0.6*margin.top + 10*Math.random()}})
               .attr('r', 2)
               .attr('opacity', 0.6);
@@ -1095,7 +1095,7 @@ function drawScatter(dataset, variable, category, catLength) {
   chart.selectAll('dot')
         .data(dataset)
         .enter()
-        .filter(function(d) {return d[variable] === category & d.sentence <= 30})
+        .filter(function(d) {return d[variable] == category & d.sentence <= 30})
         .append('circle')
         .attr('class', function(d) {return 'dot ' + 'dot' + d[variable]})
         .attr('opacity', 0)
