@@ -108,9 +108,9 @@ function getData() {
               })
       .entries(filteredData);
 
-  if (sortMethod == 'ascending') {
+  if (sortMethod === 'ascending') {
     nestedData.sort(function(a, b) {
-            if (a.value.median == b.value.median) {
+            if (a.value.median === b.value.median) {
               return d3.ascending(a.value.q3, b.value.q3)
             }
 
@@ -119,9 +119,9 @@ function getData() {
     ); //end sort
   } //end if
 
-  else if (sortMethod == 'descending') {
+  else if (sortMethod === 'descending') {
     nestedData.sort(function(a, b) {
-            if (a.value.median == b.value.median) {
+            if (a.value.median === b.value.median) {
               return d3.descending(a.value.q3, b.value.q3)
             }
 
@@ -344,7 +344,7 @@ function drawSideChart(view='box') {
                 'max': [smallWidth - 3*margin.left, 'maximum']
                 };
 
-  if (view == 'box') {
+  if (view === 'box') {
 
     for (var x in xPoints) {
 
@@ -399,7 +399,7 @@ function drawSideChart(view='box') {
               .attr('opacity', 1);
   }
 
-  else if (view == 'dots') {
+  else if (view === 'dots') {
 
     var description = ['Each dot represents one defendant. Its horizonal',
                         'position represents the prison sentence that the',
@@ -421,9 +421,9 @@ function drawSideChart(view='box') {
               .attr('class', 'desc dot-desc')
               .attr('cx', function(d) {return d})
               .attr('cy', function(d, i) {
-                if (i%4 == 0) {return margin.top}
-                else if (i%3 == 0) {return 1.2*margin.top + 10*Math.random()}
-                else if (i%2 == 0) {return 0.8*margin.top + 10*Math.random()}
+                if (i%4 === 0) {return margin.top}
+                else if (i%3 === 0) {return 1.2*margin.top + 10*Math.random()}
+                else if (i%2 === 0) {return 0.8*margin.top + 10*Math.random()}
                 else {return 0.6*margin.top + 10*Math.random()}})
               .attr('r', 2)
               .attr('opacity', 0.6);
@@ -1261,6 +1261,11 @@ function delayScatters(dataset) {
 
     //reset plots
     else if (explodeClicked) {
+      
+      //reset diagram and bring back boxplots
+      box.transition().duration(1300).attr('opacity', 1);
+      desc.remove();
+      drawSideChart(view='box');
 
       //reset explode button
       explodeCircle.transition().duration(500).attr('cx', 3*margin.left);
@@ -1268,11 +1273,6 @@ function delayScatters(dataset) {
 
       for (cat in clicked) {
         if (clicked[cat]) {
-
-          //reset diagram and bring back boxplots
-          desc.remove();
-          drawSideChart(view='box');
-          box.transition().duration(1300).attr('opacity', 1);
 
           //remove dots
           var scatters = d3.selectAll('.dot');
